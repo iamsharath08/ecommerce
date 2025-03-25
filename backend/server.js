@@ -11,7 +11,7 @@ app.use(express.json());
 
 // Enable CORS for your frontend origin only
 app.use(cors({
-    origin: 'http://localhost:3000',  // Only allow frontend origin
+	origin: 'http://172.18.0.4:3000',  // Only allow frontend origin
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type, Authorization",
 }));
@@ -379,4 +379,5 @@ app.put("/update-profile", authenticateToken, (req, res) => {
 
 
 // Start Server
-app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${process.env.PORT}`));

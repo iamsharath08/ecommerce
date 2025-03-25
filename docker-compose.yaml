@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    env_file:
+      - .env  # Load frontend environment variables
+    network_mode: host
+    
+
+  backend:
+    container_name: backend
+    build:
+      context: backend/
+    image: backend-image
+    ports:
+      - "5000:5000"
+    env_file:
+      - backend/.env  # Load backend environment variables
+    depends_on:
+      mysql:
+        condition: service_healthy  # ✅ Wait for MySQL to be ready
+    network_mode: host
+      
+
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=Password
+      - MYSQL_DATABASE=ecommerce
+    ports:
+      - "3306:3306"
+    healthcheck:  # ✅ Ensures MySQL is ready before backend starts
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+    network_mode: host
+    
+
+networks:
+  three-tier-net:
+    driver: bridge
